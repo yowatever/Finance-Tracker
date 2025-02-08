@@ -1,6 +1,7 @@
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
+from flask import current_app 
 from models import User, db
 from flask import jsonify, request
 
@@ -31,6 +32,6 @@ def register_user(username, password):
 def authenticate_user(username, password):
     user = User.query.filter_by(username=username).first()
     if user and check_password_hash(user.password_hash, password):
-        access_token = create_access_token(identity=username)
+        access_token = create_access_token(identity=username,json_encoder=current_app.json.provider.default)
         return True, access_token
     return False, "Invalid credentials"
